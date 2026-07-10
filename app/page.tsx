@@ -5,6 +5,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useLenis } from "lenis/react";
+import AnimatedButton from "../components/ui/animated-button";
+import NotchNavbar from "../components/ui/notch-navbar";
+import FaqAccordion from "../components/ui/faq-accordion";
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -13,7 +16,6 @@ if (typeof window !== "undefined") {
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activePanelTab, setActivePanelTab] = useState<"signals" | "actions" | "compliance">("signals");
   const [panelInput, setPanelInput] = useState("");
   const [panelMessages, setPanelMessages] = useState([
@@ -293,23 +295,24 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
       }
     );
 
-    gsap.fromTo(
-      ".glass-card",
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        ease: "power2.out",
-        stagger: 0.12,
-        scrollTrigger: {
-          trigger: "#signal-blocks",
-          start: "top 80%",
-          once: true,
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
+    const glassCards = gsap.utils.toArray<HTMLElement>(".glass-card");
+    glassCards.forEach((card) => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
 
     gsap.fromTo(
       ".hero-panel, .brand-box, .engine-card, .timeline-card",
@@ -404,40 +407,27 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
   }, []);
 
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
+
 
   return (
     <div ref={containerRef}>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'navbar-scrolled py-2' : 'py-4'}`} id="navbar">
-        <div className="max-w-container-max mx-auto px-grid-margin flex justify-between items-center h-16">
-          <div className="font-headline-lg text-[24px] font-bold text-primary tracking-tight">ZeroCarbon MCP</div>
-          <div className="hidden md:flex items-center gap-8">
-            <a className="font-body-md text-body-md hover:text-primary transition-colors cursor-pointer" onClick={(e) => handleNavClick(e, '#hero')}>Home</a>
-            <a className="font-body-md text-body-md hover:text-primary transition-colors cursor-pointer" onClick={(e) => handleNavClick(e, '#features')}>Features</a>
-            <a className="font-body-md text-body-md hover:text-primary transition-colors cursor-pointer" onClick={(e) => handleNavClick(e, '#pricing')}>Pricing</a>
-            <a className="font-body-md text-body-md hover:text-primary transition-colors cursor-pointer" onClick={(e) => handleNavClick(e, '#developers')}>Developers</a>
-            <a className="font-body-md text-body-md hover:text-primary transition-colors cursor-pointer" onClick={(e) => handleNavClick(e, '#faq')}>FAQ</a>
-            <button className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-body-md text-body-md font-bold hover:bg-opacity-90 transition-all" onClick={(e) => handleNavClick(e, '#contact')}>Request a Demo</button>
-          </div>
-          <button className="md:hidden">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-        </div>
-      </nav>
+      <NotchNavbar />
 
       <main>
         {/* Hero Section */}
-        <section id="hero" className="pt-40 pb-12 px-grid-margin max-w-container-max mx-auto organic-bg ambient-hero overflow-hidden">
-          <div className="absolute top-0 right-0 h-90 w-90 rounded-full bg-accent-green/10 blur-3xl"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
+        <section id="hero" className="pt-40 pb-12 w-full organic-bg ambient-hero overflow-hidden">
+          <div className="max-w-container-max mx-auto px-grid-margin relative">
+            <div className="absolute top-0 right-0 h-90 w-90 rounded-full bg-accent-green/10 blur-3xl"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
             <div className="lg:col-span-6 space-y-8">
-              <div className="inline-flex items-center gap-3 rounded-full border border-accent-green/20 bg-surface-mint/90 px-4 py-2 text-sm font-semibold text-accent-green shadow-sm">
+              <div className="inline-flex items-center gap-3 rounded-full border border-accent-green/20 bg-surface-mint/90 px-4 py-2 text-sm font-semibold text-accent-green shadow-sm hero-animate">
                 <span className="h-2 w-2 rounded-full bg-accent-green animate-pulse"></span>
                 ZeroCarbon MCP launch
               </div>
               <div className="space-y-6">
+                <h2 className="font-display-md text-5xl sm:text-6xl md:text-7xl font-bold italic text-primary tracking-tight leading-none mb-2 hero-animate">
+                  ZeroCarbon MCP
+                </h2>
                 <h1 className="font-display-lg text-display-lg max-md:text-headline-xl leading-[1.02] hero-animate">
                   Turn every carbon signal into operational action.
                 </h1>
@@ -446,13 +436,13 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-                <button className="shine bg-primary text-on-primary px-10 py-5 rounded-full font-body-md text-body-md font-bold flex items-center justify-center gap-2 hover:shadow-xl transition-all hero-animate" onClick={(e) => handleNavClick(e, '#contact')}>
+                <AnimatedButton variant="solid" className="px-10 py-5 rounded-full font-body-md text-body-md flex items-center justify-center gap-2 hover:shadow-xl hero-animate" onClick={(e) => handleNavClick(e, '#contact')}>
                   Request a Demo
                   <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-                </button>
-                <button className="border border-primary/20 text-primary px-10 py-5 rounded-full font-body-md text-body-md font-semibold hover:bg-primary/5 transition-all hero-animate" onClick={(e) => handleNavClick(e, '#signal-blocks')}>
+                </AnimatedButton>
+                <AnimatedButton variant="outline" className="px-10 py-5 rounded-full font-body-md text-body-md hero-animate" onClick={(e) => handleNavClick(e, '#signal-blocks')}>
                   Explore Signals
-                </button>
+                </AnimatedButton>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-5 shadow-sm hero-animate">
@@ -648,6 +638,7 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </section>
 
@@ -1046,7 +1037,7 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
                   </li>
                 </ul>
               </div>
-              <button className="w-full bg-surface-mint text-primary py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all">Get Started</button>
+              <AnimatedButton variant="secondary" className="w-full py-3 rounded-full">Get Started</AnimatedButton>
             </div>
             {/* Growth Plan */}
             <div className="pricing-card section-card group bg-white p-10 rounded-3xl border-2 border-accent-green shadow-md flex flex-col justify-between relative transition-all duration-400">
@@ -1070,7 +1061,7 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
                   </li>
                 </ul>
               </div>
-              <button className="w-full bg-primary text-on-primary py-3 rounded-full font-bold hover:bg-opacity-90 transition-all">Start Free Trial</button>
+              <AnimatedButton variant="solid" className="w-full py-3 rounded-full">Start Free Trial</AnimatedButton>
             </div>
             {/* Enterprise Plan */}
             <div className="pricing-card bg-white p-10 rounded-3xl border border-outline-variant/10 shadow-sm flex flex-col justify-between transition-all duration-400">
@@ -1093,46 +1084,30 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
                   </li>
                 </ul>
               </div>
-              <button className="w-full bg-surface-mint text-primary py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all" onClick={(e) => handleNavClick(e, '#contact')}>Contact Sales</button>
+              <AnimatedButton variant="secondary" className="w-full py-3 rounded-full" onClick={(e) => handleNavClick(e, '#contact')}>Contact Sales</AnimatedButton>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
         <section id="faq" className="px-grid-margin py-12 md:py-16 max-w-4xl mx-auto">
-          <h2 className="gsap-title font-headline-xl text-headline-xl mb-16 text-center">Frequently asked questions</h2>
-          <div className="space-y-0 divide-y divide-outline-variant/20">
-            {/* FAQ 1 */}
-            <div className={`group py-6 ${openFaq === 1 ? 'open' : ''}`}>
-              <button className="w-full flex justify-between items-center text-left cursor-pointer" onClick={() => toggleFaq(1)}>
-                <h4 className="font-headline-lg text-[22px]">Is my data secure with ZeroCarbon?</h4>
-                <span className={`material-symbols-outlined transition-transform duration-300 ${openFaq === 1 ? 'rotate-180' : ''}`}>expand_more</span>
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openFaq === 1 ? 'max-h-40 mt-4' : 'max-h-0'}`}>
-                <p className="font-body-md text-text-muted">Yes. ZeroCarbon MCP uses enterprise-grade AES-256 encryption and is SOC2 Type II compliant. We never train our AI on your sensitive financial or infrastructure data.</p>
-              </div>
-            </div>
-            {/* FAQ 2 */}
-            <div className={`group py-6 ${openFaq === 2 ? 'open' : ''}`}>
-              <button className="w-full flex justify-between items-center text-left cursor-pointer" onClick={() => toggleFaq(2)}>
-                <h4 className="font-headline-lg text-[22px]">Which cloud providers do you support?</h4>
-                <span className={`material-symbols-outlined transition-transform duration-300 ${openFaq === 2 ? 'rotate-180' : ''}`}>expand_more</span>
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openFaq === 2 ? 'max-h-40 mt-4' : 'max-h-0'}`}>
-                <p className="font-body-md text-text-muted">We offer native integrations for AWS, Google Cloud, and Microsoft Azure, along with generic webhooks for private data centers.</p>
-              </div>
-            </div>
-            {/* FAQ 3 */}
-            <div className={`group py-6 border-b border-outline-variant/20 ${openFaq === 3 ? 'open' : ''}`}>
-              <button className="w-full flex justify-between items-center text-left cursor-pointer" onClick={() => toggleFaq(3)}>
-                <h4 className="font-headline-lg text-[22px]">Can it handle Scope 3 emissions?</h4>
-                <span className={`material-symbols-outlined transition-transform duration-300 ${openFaq === 3 ? 'rotate-180' : ''}`}>expand_more</span>
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${openFaq === 3 ? 'max-h-40 mt-4' : 'max-h-0'}`}>
-                <p className="font-body-md text-text-muted">Absolutely. Scope 3 is our specialty. Our AI engine scans purchase orders and supply chain contracts to automatically categorize and calculate indirect emissions.</p>
-              </div>
-            </div>
-          </div>
+          <FaqAccordion 
+            title="Frequently asked questions"
+            items={[
+              { 
+                question: "Is my data secure with ZeroCarbon?", 
+                answer: "Yes. ZeroCarbon MCP uses enterprise-grade AES-256 encryption and is SOC2 Type II compliant. We never train our AI on your sensitive financial or infrastructure data." 
+              },
+              { 
+                question: "Which cloud providers do you support?", 
+                answer: "We offer native integrations for AWS, Google Cloud, and Microsoft Azure, along with generic webhooks for private data centers." 
+              },
+              { 
+                question: "Can it handle Scope 3 emissions?", 
+                answer: "Absolutely. Scope 3 is our specialty. Our AI engine scans purchase orders and supply chain contracts to automatically categorize and calculate indirect emissions." 
+              }
+            ]}
+          />
         </section>
 
         {/* Final CTA */}
@@ -1146,12 +1121,12 @@ const titles = gsap.utils.toArray<HTMLElement>(".gsap-title");
               <h2 className="gsap-title font-display-lg text-display-lg max-md:text-headline-xl">Bring carbon intelligence back into your workflow.</h2>
               <p className="font-body-xl text-body-xl opacity-80">Join 200+ sustainable engineering teams reducing their compliance load by 60%.</p>
               <div className="flex flex-wrap justify-center gap-4">
-                <button className="bg-surface-mint text-primary px-12 py-6 rounded-full font-body-md text-body-md font-bold hover:bg-white transition-all shadow-2xl" onClick={(e) => handleNavClick(e, '#contact')}>
+                <AnimatedButton variant="secondary" className="px-12 py-6 rounded-full font-body-md text-body-md shadow-2xl" onClick={(e) => handleNavClick(e, '#contact')}>
                   Request Demo
-                </button>
-                <button className="bg-transparent border border-white/30 text-white px-12 py-6 rounded-full font-body-md text-body-md font-bold hover:bg-white/10 transition-all">
+                </AnimatedButton>
+                <AnimatedButton variant="outline" className="border-white/30 text-white hover:bg-white/10 px-12 py-6 rounded-full font-body-md text-body-md [--shine:rgba(255,255,255,0.4)]">
                   Read Documentation
-                </button>
+                </AnimatedButton>
               </div>
             </div>
           </div>
