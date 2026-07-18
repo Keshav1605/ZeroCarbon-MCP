@@ -22,18 +22,18 @@ const logos: Logo[] = [
 
 export function LogoCloud() {
   return (
-    <section className="relative py-12 overflow-hidden">
+    <section className="relative py-6 overflow-hidden">
       {/* Subtle top border line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent" />
       {/* Subtle bottom border line */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent" />
 
       {/* Heading */}
-      <div className="text-center mb-8">
-        <p className="font-label-caps text-label-caps uppercase tracking-[0.18em] text-accent-green mb-1">
+      <div className="text-center mb-4">
+        <p className="font-label-caps text-xs uppercase tracking-[0.18em] text-accent-green mb-1">
           Trusted by
         </p>
-        <h2 className="font-display-md text-2xl md:text-3xl font-bold italic text-primary tracking-tight">
+        <h2 className="font-display-md text-xl md:text-2xl font-bold italic text-primary tracking-tight">
           Best in the Game
         </h2>
       </div>
@@ -46,7 +46,7 @@ export function LogoCloud() {
           WebkitMaskImage: 'linear-gradient(to right, transparent, black 18%, black 82%, transparent)',
         }}
       >
-        <InfiniteSlider gap={64} duration={30} durationOnHover={90}>
+        <InfiniteSlider gap={48} duration={30} durationOnHover={90}>
           {logos.map((logo) => (
             <img
               key={`logo-${logo.alt}`}
@@ -55,7 +55,7 @@ export function LogoCloud() {
               loading="lazy"
               width="auto"
               height="auto"
-              className="select-none h-5 md:h-6 opacity-40 grayscale cursor-pointer
+              className="select-none h-4 md:h-5 opacity-40 grayscale cursor-pointer
                          hover:opacity-100 hover:grayscale-0
                          transition-all duration-400 ease-in-out"
             />

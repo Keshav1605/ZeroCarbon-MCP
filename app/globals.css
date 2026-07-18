@@ -146,7 +146,7 @@ body {
     filter: blur(18px);
     opacity: 1;
     z-index: -1;
-    animation: heroGlowDrift 10s ease-in-out infinite;
+    animation: heroGlowDrift 25s ease-in-out infinite; /* Much slower animation */
     /* Promote to GPU layer: this element animates every frame and is large.
      * Without will-change, the browser repaints it on the main thread each frame. */
     will-change: transform, opacity;
@@ -159,7 +159,7 @@ body {
       opacity: 0.95;
     }
     50% {
-      transform: translate3d(1.5%, -1.2%, 0) scale(1.03);
+      transform: translate3d(0.5%, -0.4%, 0) scale(1.01); /* Much smaller movement */
       opacity: 1;
     }
     100% {

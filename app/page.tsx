@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -16,7 +16,12 @@ import { PlatformNetwork } from "../components/ui/platform-network";
 
 const McpFlow = dynamic(() => import("../components/ui/mcp-flow"), {
   ssr: false,
-  loading: () => <div className="w-full aspect-[4/3] bg-surface-mint/30 animate-pulse rounded-[40px] flex items-center justify-center text-text-muted">Loading visualization...</div>
+  loading: () => <div className="w-full aspect-4/3 bg-surface-mint/30 animate-pulse rounded-[40px] flex items-center justify-center text-text-muted">Loading visualization...</div>
+});
+
+const HeroInteractiveFlow = dynamic(() => import("../components/ui/HeroInteractiveFlow"), {
+  ssr: false,
+  loading: () => <div className="w-full max-w-5xl aspect-video mx-auto bg-surface-mint/30 animate-pulse rounded-2xl flex items-center justify-center text-text-muted">Loading flow...</div>
 });
 
 const FaqAccordion = dynamic(() => import("../components/ui/faq-accordion"), {
@@ -30,9 +35,31 @@ if (typeof window !== "undefined") {
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const leftColumnRef = useRef<HTMLDivElement>(null);
+  const [leftColumnHeight, setLeftColumnHeight] = useState<number | null>(null);
 
   // Get lenis instance for programmatic scrollTo calls
   const lenis = useLenis();
+
+  // Measure left column height
+  useEffect(() => {
+    const updateHeight = () => {
+      if (leftColumnRef.current) {
+        setLeftColumnHeight(leftColumnRef.current.offsetHeight);
+      }
+    };
+
+    // Initial measurement
+    updateHeight();
+
+    // Update on resize
+    const resizeObserver = new ResizeObserver(updateHeight);
+    if (leftColumnRef.current) {
+      resizeObserver.observe(leftColumnRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   // Note: Lenis <-> GSAP sync is handled globally in ScrollProvider (single RAF loop)
 
@@ -355,54 +382,54 @@ export default function Home() {
     <div ref={containerRef}>
       <NotchNavbar />
 
-      <main>
+      <main className="relative overflow-x-hidden">
         {/* Hero Section */}
-        <section id="hero" className="pt-40 pb-12 w-full organic-bg ambient-hero overflow-hidden">
+        <section id="hero" className="min-h-screen flex items-center pt-24 pb-16 w-full organic-bg ambient-hero overflow-visible relative">
           <div className="max-w-container-max mx-auto px-grid-margin relative">
-            <div className="absolute top-0 right-0 h-90 w-90 rounded-full bg-accent-green/10 blur-3xl"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
-            <div className="lg:col-span-5 space-y-8">
-              <div className="inline-flex items-center gap-3 rounded-full border border-accent-green/20 bg-surface-mint/90 px-4 py-2 text-sm font-semibold text-accent-green shadow-sm hero-animate">
-                <span className="h-2 w-2 rounded-full bg-accent-green animate-pulse"></span>
+            <div className="absolute top-0 right-0 h-90 w-90 rounded-full bg-accent-green/10 blur-3xl z-0"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative">
+            <div ref={leftColumnRef} className="lg:col-span-5 space-y-5 relative z-30 pointer-events-none">
+              <div className="inline-flex items-center gap-2 rounded-full border border-accent-green/20 bg-surface-mint/90 px-3 py-1.5 text-xs font-semibold text-accent-green shadow-sm hero-animate pointer-events-auto">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent-green animate-pulse"></span>
                 ZeroCarbon MCP launch
               </div>
-              <div className="space-y-6">
-                <h2 className="font-display-md text-5xl sm:text-6xl md:text-7xl font-bold italic text-primary tracking-tight leading-none mb-2 hero-animate">
+              <div className="space-y-3">
+                <h2 className="font-display-md text-4xl sm:text-5xl md:text-6xl font-bold italic text-primary tracking-tight leading-none mb-1 hero-animate">
                   ZeroCarbon MCP
                 </h2>
                 <h1 className="font-display-lg text-display-lg max-md:text-headline-xl leading-[1.02] hero-animate">
                   Turn every carbon signal into operational action.
                 </h1>
-                <p className="font-body-xl text-body-xl text-text-muted max-w-2xl hero-animate">
+                <p className="font-body-xl text-body-xl text-text-muted max-w-2xl hero-animate text-sm">
                   A new MCP built to unify AI agents, carbon telemetry, and compliance workflows in one animated control plane.
                 </p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-                <AnimatedButton variant="solid" className="px-10 py-5 rounded-full font-body-md text-body-md flex items-center justify-center gap-2 hover:shadow-xl hero-animate" onClick={(e) => handleNavClick(e, '#contact')}>
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+                <AnimatedButton variant="solid" className="px-8 py-3 rounded-full font-body-md text-body-md flex items-center justify-center gap-2 hover:shadow-xl hero-animate pointer-events-auto text-sm" onClick={(e) => handleNavClick(e, '#contact')}>
                   Request a Demo
-                  <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </AnimatedButton>
-                <AnimatedButton variant="outline" className="px-10 py-5 rounded-full font-body-md text-body-md hero-animate" onClick={(e) => handleNavClick(e, '#signal-blocks')}>
+                <AnimatedButton variant="outline" className="px-8 py-3 rounded-full font-body-md text-body-md hero-animate pointer-events-auto text-sm" onClick={(e) => handleNavClick(e, '#signal-blocks')}>
                   Explore Signals
                 </AnimatedButton>
               </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-5 shadow-sm hero-animate">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Latency</p>
-                  <p className="mt-3 text-2xl font-bold text-primary">24 ms</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Latency</p>
+                  <p className="mt-2 text-xl font-bold text-primary">24 ms</p>
                 </div>
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-5 shadow-sm hero-animate">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Scope coverage</p>
-                  <p className="mt-3 text-2xl font-bold text-primary">1-3</p>
+                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Scope coverage</p>
+                  <p className="mt-2 text-xl font-bold text-primary">1-3</p>
                 </div>
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-5 shadow-sm hero-animate">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-text-muted">Compliance</p>
-                  <p className="mt-3 text-2xl font-bold text-primary">CSRD + SEC</p>
+                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Compliance</p>
+                  <p className="mt-2 text-xl font-bold text-primary">CSRD + SEC</p>
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-7 relative hero-animate">
-              <McpFlow />
+            <div className="lg:col-span-7 relative hero-animate h-full flex items-center justify-center">
+              {leftColumnHeight && <HeroInteractiveFlow containerHeight={leftColumnHeight} />}
             </div>
 
           </div>
@@ -413,43 +440,43 @@ export default function Home() {
         <LogoCloud />
 
         {/* Social Proof */}
-        <section id="social-proof" className="py-10">
+        <section id="social-proof" className="py-6">
           <div className="max-w-container-max mx-auto px-grid-margin">
-            <div className="flow-soft relative overflow-hidden rounded-[40px] border border-outline-variant/20 bg-white p-10 shadow-[0_40px_90px_rgba(3,36,22,0.08)]">
+            <div className="flow-soft relative overflow-hidden rounded-[40px] border border-outline-variant/20 bg-white p-6 shadow-[0_40px_90px_rgba(3,36,22,0.08)]">
               <div className="absolute -right-10 top-12 h-48 w-48 rounded-full bg-accent-green/10 blur-3xl"></div>
-              <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] items-center">
-                <div className="space-y-6">
-                  <p className="font-label-caps text-label-caps uppercase text-accent-green">Trusted by modern AI teams</p>
-                  <h2 className="gsap-title font-headline-xl text-headline-xl leading-tight text-text-main">Built to scale carbon intelligence across product and operations.</h2>
-                  <p className="max-w-xl font-body-xl text-body-xl text-text-muted">ZeroCarbon MCP delivers live signals, actionable carbon guidance, and policy-safe workflow automation for companies shipping sustainable AI and cloud products.</p>
+              <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] items-center">
+                <div className="space-y-4">
+                  <p className="font-label-caps text-xs uppercase text-accent-green">Trusted by modern AI teams</p>
+                  <h2 className="gsap-title font-headline-lg text-[2rem] leading-tight text-text-main">Built to scale carbon intelligence across product and operations.</h2>
+                  <p className="max-w-xl font-body-md text-text-muted text-sm">ZeroCarbon MCP delivers live signals, actionable carbon guidance, and policy-safe workflow automation.</p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-6 text-center" style={{ animationDelay: "0s" }}>
-                    <span className="material-symbols-outlined text-[28px] text-accent-green">bolt</span>
-                    <p className="mt-4 text-sm font-semibold text-primary">Speed-first</p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-4 text-center" style={{ animationDelay: "0s" }}>
+                    <span className="material-symbols-outlined text-2xl text-accent-green">bolt</span>
+                    <p className="mt-2 text-xs font-semibold text-primary">Speed-first</p>
                   </div>
-                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-6 text-center" style={{ animationDelay: "0.2s" }}>
-                    <span className="material-symbols-outlined text-[28px] text-accent-green">shield</span>
-                    <p className="mt-4 text-sm font-semibold text-primary">Compliance-ready</p>
+                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-4 text-center" style={{ animationDelay: "0.2s" }}>
+                    <span className="material-symbols-outlined text-2xl text-accent-green">shield</span>
+                    <p className="mt-2 text-xs font-semibold text-primary">Compliance-ready</p>
                   </div>
-                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-6 text-center" style={{ animationDelay: "0.4s" }}>
-                    <span className="material-symbols-outlined text-[28px] text-accent-green">trending_up</span>
-                    <p className="mt-4 text-sm font-semibold text-primary">Impact-driven</p>
+                  <div className="brand-box float-animation rounded-[28px] border border-outline-variant/15 bg-surface-mint/90 p-4 text-center" style={{ animationDelay: "0.4s" }}>
+                    <span className="material-symbols-outlined text-2xl text-accent-green">trending_up</span>
+                    <p className="mt-2 text-xs font-semibold text-primary">Impact-driven</p>
                   </div>
                 </div>
               </div>
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-[28px] bg-primary/5 p-6">
-                  <p className="text-sm uppercase tracking-[0.18em] text-text-muted">Live streams</p>
-                  <p className="mt-4 text-3xl font-bold text-primary">84%</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-[28px] bg-primary/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Live streams</p>
+                  <p className="mt-2 text-2xl font-bold text-primary">84%</p>
                 </div>
-                <div className="rounded-[28px] bg-primary/5 p-6">
-                  <p className="text-sm uppercase tracking-[0.18em] text-text-muted">Auto rules</p>
-                  <p className="mt-4 text-3xl font-bold text-primary">42</p>
+                <div className="rounded-[28px] bg-primary/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Auto rules</p>
+                  <p className="mt-2 text-2xl font-bold text-primary">42</p>
                 </div>
-                <div className="rounded-[28px] bg-primary/5 p-6">
-                  <p className="text-sm uppercase tracking-[0.18em] text-text-muted">Verified audits</p>
-                  <p className="mt-4 text-3xl font-bold text-primary">12k</p>
+                <div className="rounded-[28px] bg-primary/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Verified audits</p>
+                  <p className="mt-2 text-2xl font-bold text-primary">12k</p>
                 </div>
               </div>
             </div>
