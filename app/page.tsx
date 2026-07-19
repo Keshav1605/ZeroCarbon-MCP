@@ -10,9 +10,20 @@ import dynamic from "next/dynamic";
 import AnimatedButton from "../components/ui/animated-button";
 import NotchNavbar from "../components/ui/notch-navbar";
 import { LogoCloud } from "../components/ui/logo-cloud";
-import { StackedSteps } from "../components/ui/stacked-steps";
-import { EcosystemShowcase } from "../components/ui/ecosystem-showcase";
-import { PlatformNetwork } from "../components/ui/platform-network";
+const StackedSteps = dynamic(() => import("../components/ui/stacked-steps").then(mod => mod.StackedSteps), {
+  ssr: false,
+  loading: () => <div className="min-h-[400px] w-full bg-surface-container-low animate-pulse rounded-[40px] flex items-center justify-center text-text-muted">Loading steps...</div>
+});
+
+const EcosystemShowcase = dynamic(() => import("../components/ui/ecosystem-showcase").then(mod => mod.EcosystemShowcase), {
+  ssr: false,
+  loading: () => <div className="min-h-[400px] w-full bg-surface-container-low animate-pulse rounded-[40px] flex items-center justify-center text-text-muted">Loading ecosystem...</div>
+});
+
+const PlatformNetwork = dynamic(() => import("../components/ui/platform-network").then(mod => mod.PlatformNetwork), {
+  ssr: false,
+  loading: () => <div className="min-h-[400px] w-full bg-surface-container-low animate-pulse rounded-[40px] flex items-center justify-center text-text-muted">Loading network...</div>
+});
 
 const McpFlow = dynamic(() => import("../components/ui/mcp-flow"), {
   ssr: false,
@@ -137,106 +148,116 @@ export default function Home() {
     });
 
     // ─── 3. Feature cards stagger ───────────────────────────────────────────
-    gsap.fromTo(
-      ".feature-card",
-      { autoAlpha: 0, y: 52, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.85,
-        stagger: { each: 0.13, ease: "power1.inOut" },
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: "#features",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector(".feature-card")) {
+      gsap.fromTo(
+        ".feature-card",
+        { autoAlpha: 0, y: 52, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.85,
+          stagger: { each: 0.13, ease: "power1.inOut" },
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#features",
+            start: "top 82%",
+            once: true,
+          },
+        }
+      );
+    }
 
     // ─── 4. Pricing cards stagger ───────────────────────────────────────────
-    gsap.fromTo(
-      ".pricing-card",
-      { autoAlpha: 0, y: 52, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.85,
-        stagger: { each: 0.13, ease: "power1.inOut" },
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: "#pricing",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector(".pricing-card")) {
+      gsap.fromTo(
+        ".pricing-card",
+        { autoAlpha: 0, y: 52, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.85,
+          stagger: { each: 0.13, ease: "power1.inOut" },
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#pricing",
+            start: "top 82%",
+            once: true,
+          },
+        }
+      );
+    }
 
     // ─── 5. Count-up stats ──────────────────────────────────────────────────
     const stats = gsap.utils.toArray<HTMLElement>("[data-count]");
-    stats.forEach((el) => {
-      const target = Number(el.getAttribute("data-count") ?? "0");
-      const suffix = el.getAttribute("data-count-suffix") ?? "";
-      const prefix = el.getAttribute("data-count-prefix") ?? "";
-      const divider = el.getAttribute("data-count-divider") ?? "";
-      const counter = { val: 0 };
+    if (stats.length > 0 && document.querySelector("#architecture")) {
+      stats.forEach((el) => {
+        const target = Number(el.getAttribute("data-count") ?? "0");
+        const suffix = el.getAttribute("data-count-suffix") ?? "";
+        const prefix = el.getAttribute("data-count-prefix") ?? "";
+        const divider = el.getAttribute("data-count-divider") ?? "";
+        const counter = { val: 0 };
 
-      gsap.to(counter, {
-        val: target,
-        duration: 1.4,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#architecture",
-          start: "top 80%",
-          once: true,
-        },
-        onUpdate: () => {
-          const current = Math.round(counter.val);
-          el.textContent = divider
-            ? `${current}${divider}${suffix}`
-            : `${prefix}${current}${suffix}`;
-        },
+        gsap.to(counter, {
+          val: target,
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#architecture",
+            start: "top 80%",
+            once: true,
+          },
+          onUpdate: () => {
+            const current = Math.round(counter.val);
+            el.textContent = divider
+              ? `${current}${divider}${suffix}`
+              : `${prefix}${current}${suffix}`;
+          },
+        });
       });
-    });
+    }
 
     // ─── 6. Architecture stagger items ──────────────────────────────────────
-    gsap.fromTo(
-      "#architecture .stagger-item",
-      { autoAlpha: 0, y: 36, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: "#architecture",
-          start: "top 80%",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector("#architecture .stagger-item")) {
+      gsap.fromTo(
+        "#architecture .stagger-item",
+        { autoAlpha: 0, y: 36, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#architecture",
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    }
 
     // ─── 7. Developer section ───────────────────────────────────────────────
-    gsap.fromTo(
-      "#developers > div > div",
-      { autoAlpha: 0, y: 28, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.85,
-        ease: "power3.out",
-        stagger: { each: 0.09, ease: "power1.inOut" },
-        scrollTrigger: {
-          trigger: "#developers",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector("#developers")) {
+      gsap.fromTo(
+        "#developers > div > div",
+        { autoAlpha: 0, y: 28, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.85,
+          ease: "power3.out",
+          stagger: { each: 0.09, ease: "power1.inOut" },
+          scrollTrigger: {
+            trigger: "#developers",
+            start: "top 82%",
+            once: true,
+          },
+        }
+      );
+    }
 
     // ─── 7b. Code lines typewriter reveal ────────────────────────────────────
     gsap.fromTo(
@@ -295,84 +316,92 @@ export default function Home() {
     }
 
     // ─── 8. Brand boxes (social proof) ──────────────────────────────────────
-    gsap.fromTo(
-      ".brand-box",
-      { autoAlpha: 0, y: 28, scale: 0.96, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.75,
-        ease: "expo.out",
-        stagger: { each: 0.08, ease: "power1.inOut" },
-        scrollTrigger: {
-          trigger: "#social-proof",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector(".brand-box")) {
+      gsap.fromTo(
+        ".brand-box",
+        { autoAlpha: 0, y: 28, scale: 0.96, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.75,
+          ease: "expo.out",
+          stagger: { each: 0.08, ease: "power1.inOut" },
+          scrollTrigger: {
+            trigger: "#social-proof",
+            start: "top 82%",
+            once: true,
+          },
+        }
+      );
+    }
 
     // ─── 9. Glass cards ────────────────────────────────────────────────────
     const glassCards = gsap.utils.toArray<HTMLElement>(".glass-card");
-    glassCards.forEach((card) => {
+    if (glassCards.length > 0) {
+      glassCards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { autoAlpha: 0, y: 36, force3D: true },
+          {
+            ...defaults,
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.85,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 86%",
+              once: true,
+            },
+          }
+        );
+      });
+    }
+
+    // ─── 10. Engine cards ───────────────────────────────────────────────────
+    if (document.querySelector("[id='platform-engine'] .group")) {
       gsap.fromTo(
-        card,
+        "[id='platform-engine'] .group",
+        { autoAlpha: 0, y: 36, scale: 0.97, force3D: true },
+        {
+          ...defaults,
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.9,
+          ease: "expo.out",
+          stagger: { each: 0.1, ease: "power1.inOut" },
+          scrollTrigger: {
+            trigger: "#platform-engine",
+            start: "top 82%",
+            once: true,
+          },
+        }
+      );
+    }
+
+
+    // ─── 12. Final CTA section ──────────────────────────────────────────────
+    if (document.querySelector("#contact")) {
+      gsap.fromTo(
+        "#contact",
         { autoAlpha: 0, y: 36, force3D: true },
         {
           ...defaults,
           autoAlpha: 1,
           y: 0,
-          duration: 0.85,
+          duration: 0.9,
           ease: "power3.out",
           scrollTrigger: {
-            trigger: card,
-            start: "top 86%",
+            trigger: "#contact",
+            start: "top 82%",
             once: true,
           },
         }
       );
-    });
-
-    // ─── 10. Engine cards ───────────────────────────────────────────────────
-    gsap.fromTo(
-      "[id='platform-engine'] .group",
-      { autoAlpha: 0, y: 36, scale: 0.97, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.9,
-        ease: "expo.out",
-        stagger: { each: 0.1, ease: "power1.inOut" },
-        scrollTrigger: {
-          trigger: "#platform-engine",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
-
-
-    // ─── 12. Final CTA section ──────────────────────────────────────────────
-    gsap.fromTo(
-      "#contact",
-      { autoAlpha: 0, y: 36, force3D: true },
-      {
-        ...defaults,
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: "#contact",
-          start: "top 82%",
-          once: true,
-        },
-      }
-    );
+    }
   }, { scope: containerRef });
 
 
@@ -414,22 +443,22 @@ export default function Home() {
                 </AnimatedButton>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                <div className="rounded-4xl border border-outline-variant/15 bg-surface/90 p-4 shadow-sm hero-animate">
                   <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Latency</p>
                   <p className="mt-2 text-xl font-bold text-primary">24 ms</p>
                 </div>
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                <div className="rounded-4xl border border-outline-variant/15 bg-surface/90 p-4 shadow-sm hero-animate">
                   <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Scope coverage</p>
                   <p className="mt-2 text-xl font-bold text-primary">1-3</p>
                 </div>
-                <div className="rounded-4xl border border-outline-variant/15 bg-white/90 p-4 shadow-sm hero-animate">
+                <div className="rounded-4xl border border-outline-variant/15 bg-surface/90 p-4 shadow-sm hero-animate">
                   <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">Compliance</p>
                   <p className="mt-2 text-xl font-bold text-primary">CSRD + SEC</p>
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-7 relative hero-animate h-full flex items-center justify-center">
-              {leftColumnHeight && <HeroInteractiveFlow containerHeight={leftColumnHeight} />}
+            <div className="lg:col-span-7 relative hero-animate h-full flex items-center justify-center min-h-[350px] md:min-h-[500px]">
+              <HeroInteractiveFlow containerHeight={leftColumnHeight || 500} />
             </div>
 
           </div>

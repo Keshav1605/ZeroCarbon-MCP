@@ -3,6 +3,8 @@ import { Newsreader, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import ScrollProvider from "./ScrollProvider";
 
+import ThemeProvider from "./ThemeProvider";
+
 // Load Google Fonts using Next.js optimization
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -56,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${newsreader.variable} ${hankenGrotesk.variable}`}>
+    <html lang="en" className={`${newsreader.variable} ${hankenGrotesk.variable}`} suppressHydrationWarning>
       <head>
         {/* Preconnect to fonts gstatic to speed up external assets (Material Symbols) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -67,9 +69,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-off-white text-text-main selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden antialiased">
-        <ScrollProvider>
-          {children}
-        </ScrollProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <ScrollProvider>
+            {children}
+          </ScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

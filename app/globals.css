@@ -111,10 +111,85 @@ html {
 
 :root {
   color-scheme: light;
-  background-color: #faf9f6;
+  background-color: #F7FAF8;
   color: #1a1c1a;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  
+  --color-background: #F7FAF8;
+  --color-off-white: #F7FAF8;
+  --color-text-main: #12261C;
+  --color-text-muted: #5C7066;
+  --color-primary: #032416;
+  --color-on-primary: #ffffff;
+  --color-surface-mint: #E9F2EA;
+  --color-outline-variant: #c1c8c2;
+  --color-surface: #F7FAF8;
+  --color-surface-container-low: #f4f4f0;
+  --color-accent-green: #2E5C44;
+}
+
+html.dark {
+  color-scheme: dark;
+  background-color: #0B0F0D;
+  color: #f7faf8;
+}
+
+.dark {
+  --color-background: #0B0F0D;
+  --color-off-white: #0B0F0D;
+  --color-text-main: #f7faf8;
+  --color-text-muted: #859e91;
+  --color-primary: #22c55e;
+  --color-on-primary: #0B0F0D;
+  --color-surface-mint: #121c17;
+  --color-outline-variant: #283a30;
+  --color-surface: #0B0F0D;
+  --color-surface-container-low: #0f1613;
+  --color-accent-green: #22c55e;
+  --color-secondary-container: #1b2e23;
+  --color-on-secondary-container: #82a48f;
+  --color-surface-variant: #1c2621;
+  --color-surface-container: #17201c;
+  --color-surface-container-high: #1e2924;
+  --color-surface-container-highest: #24322b;
+  --color-surface-container-lowest: #060908;
+  --color-on-surface: #f7faf8;
+  --color-on-background: #f7faf8;
+  --color-inverse-surface: #f7faf8;
+  --color-inverse-on-surface: #0b0f0d;
+}
+
+/* Force navbar backgrounds to remain original dark green in both themes */
+header .bg-primary, 
+header [style*="clip-path"],
+header div[class*="bg-primary"],
+header .absolute.inset-0.bg-primary {
+  background-color: #032416 !important;
+}
+
+/* Force navbar path outlines to remain white/10 in both themes */
+header svg path,
+header svg line {
+  stroke: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Force navbar CTA button (Request a Demo) to retain its light mode styling in both themes */
+header button[class*="bg-surface-mint"] {
+  background-color: #E9F2EA !important;
+  color: #032416 !important;
+  border-color: rgba(46, 92, 68, 0.2) !important;
+}
+
+header button[class*="bg-surface-mint"] span {
+  color: #032416 !important;
+}
+
+.dark .ambient-hero::before {
+  background:
+    radial-gradient(900px circle at 10% 10%, rgba(34, 197, 94, 0.05), transparent 55%),
+    radial-gradient(800px circle at 90% 30%, rgba(16, 185, 129, 0.05), transparent 60%),
+    radial-gradient(700px circle at 40% 90%, rgba(20, 83, 45, 0.12), transparent 60%);
 }
 
 body {
@@ -123,7 +198,9 @@ body {
   font-family: var(--font-body-md);
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  transition: background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1), color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 
 @layer utilities {
   .organic-bg {

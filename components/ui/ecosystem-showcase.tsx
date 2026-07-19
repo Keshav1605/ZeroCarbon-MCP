@@ -333,6 +333,7 @@ export function EcosystemShowcase() {
                         stroke={isActive ? "#2E5C44" : "#e3e3e0"}
                         strokeWidth={isActive ? 2 : 1.5}
                         strokeDasharray={isActive ? "none" : "4 4"}
+                        initial={{ opacity: 0.5 }}
                         animate={isActive ? { strokeWidth: [2, 3, 2], opacity: [0.8, 1, 0.8] } : { opacity: 0.5 }}
                         transition={isActive ? { repeat: Infinity, duration: 2, ease: "easeInOut" } : undefined}
                       />

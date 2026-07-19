@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, Zap, CreditCard, Code, HelpCircle, Menu, X } from "lucide-react";
+import { Home, Zap, CreditCard, Code, HelpCircle, Menu, X, Sun, Moon } from "lucide-react";
 import AnimatedButton from "./animated-button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 
 // Helper component for navigation links
 const NavLink = ({ 
@@ -30,6 +31,12 @@ const NavLink = ({
 
 export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Smooth scroll handler
   const handleScroll = (e: React.MouseEvent, href: string) => {
@@ -80,7 +87,7 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
           </div>
 
           {/* Center Slice (Flexible Content Area) */}
-          <div className="flex-1 h-full relative min-w-[560px] md:min-w-[860px] lg:min-w-[1080px] -ml-px">
+          <div className="flex-1 h-full relative min-w-0 md:min-w-[860px] lg:min-w-[1080px] -ml-px">
              {/* Background & Lines Layer */}
              <div className="absolute inset-0 bg-primary">
                  <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
@@ -116,7 +123,7 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
                     <path d="M17 2H21V6C21 13 14 20 6 20H2V16C2 8 9 2 17 2Z" />
                     <path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M12 4A8 8 0 0 1 20 12A8 8 0 0 1 12 20A8 8 0 0 1 4 12A8 8 0 0 1 12 4Z" opacity="0.3" />
                   </svg>
-                  <span className="font-body-md text-[15px] font-bold text-white tracking-wide">ZeroCarbon MCP</span>
+                  <span className="font-body-md text-[13px] sm:text-[15px] font-bold text-white tracking-wide">ZeroCarbon MCP</span>
                 </Link>
               </div>
 
@@ -127,6 +134,13 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
                 ))}
                 
                 <div className="flex gap-4 pl-4 border-l border-white/10 shrink-0 items-center">
+                  <button
+                    onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                    className="p-1.5 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
+                    aria-label="Toggle theme"
+                  >
+                    {mounted ? (resolvedTheme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <div className="w-4 h-4" />}
+                  </button>
                   <AnimatedButton 
                     variant="secondary" 
                     className="px-4 py-1.5 text-xs rounded-full font-bold shadow-sm"
@@ -197,6 +211,19 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
                    <span className="font-body-md font-semibold text-[14px]">{item.label}</span>
                  </a>
                ))}
+               
+               <button 
+                 onClick={() => {
+                   setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                   setIsMobileMenuOpen(false);
+                 }}
+                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors text-white/80 hover:text-white w-full text-left cursor-pointer"
+               >
+                 {mounted ? (resolvedTheme === "dark" ? <Sun className="w-5 h-5 opacity-70" /> : <Moon className="w-5 h-5 opacity-70" />) : <div className="w-5 h-5" />}
+                 <span className="font-body-md font-semibold text-[14px]">
+                   {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
+                 </span>
+               </button>
              </nav>
           </motion.div>
         )}
