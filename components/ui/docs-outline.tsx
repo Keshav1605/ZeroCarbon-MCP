@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 
 export interface OutlineItem {
   id: string;
@@ -9,53 +10,29 @@ export interface OutlineItem {
 
 export interface DocsOutlineProps {
   items: OutlineItem[];
+  activeId?: string;
+  onSelect?: (id: string) => void;
 }
 
-export function DocsOutline({ items = [] }: DocsOutlineProps) {
-  const [activeId, setActiveId] = useState<string>("");
-
-  useEffect(() => {
-    const headingElements = items.map((item) => document.getElementById(item.id));
-
-    const observerOptions = {
-      root: null, // window viewport
-      rootMargin: "-100px 0px -70% 0px", // triggers when heading is in the upper portion of screen
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id);
-        }
-      });
-    }, observerOptions);
-
-    headingElements.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      headingElements.forEach((el) => {
-        if (el) observer.unobserve(el);
-      });
-    };
-  }, [items]);
-
+export function DocsOutline({ items = [], activeId = "", onSelect }: DocsOutlineProps) {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      const offset = 90; // Header offset
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = el.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+    if (onSelect) {
+      onSelect(id);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        const offset = 90; // Header offset
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = el.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
     }
   };
 
@@ -68,33 +45,43 @@ export function DocsOutline({ items = [] }: DocsOutlineProps) {
           On this page
         </h5>
 
-        <ul className="space-y-3 list-none p-0 m-0 border-l border-neutral-100 dark:border-outline-variant/10 relative">
-          {items.map((item) => {
-            const isActive = activeId === item.id;
-            return (
-              <li key={item.id} className="pl-4 relative">
-                {/* Active Indicator Slider */}
-                {isActive && (
-                  <div className="absolute left-[-1px] top-0 bottom-0 w-[2px] bg-accent-green rounded-full shadow-[0_0_6px_rgba(46,92,68,0.4)]" />
-                )}
+        <div className="relative pl-0">
+          {/* Continuous vertical track line (skiper60 style) */}
+          <div className="absolute left-0 top-1 bottom-1 w-[1.5px] bg-neutral-200/60 dark:bg-outline-variant/15" />
 
-                <a
-                  href={`#${item.id}`}
-                  onClick={(e) => handleLinkClick(e, item.id)}
-                  className={`text-xs font-semibold block transition-colors duration-200 hover:text-neutral-800 dark:hover:text-text-main leading-normal ${
-                    isActive
-                      ? "text-accent-green font-bold"
-                      : "text-neutral-400 dark:text-text-muted"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+          <ul className="space-y-3 list-none p-0 m-0 relative">
+            {items.map((item) => {
+              const isActive = activeId === item.id;
+              return (
+                <li key={item.id} className="pl-4 relative flex items-center min-h-[24px]">
+                  {/* Sliding Active Indicator Line (skiper60 style) */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="outline-active-indicator"
+                      className="absolute left-[-1.5px] top-0 bottom-0 w-[3px] bg-accent-green rounded-full shadow-[0_0_8px_rgba(46,92,68,0.5)]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+
+                  <a
+                    href={`#${item.id}`}
+                    onClick={(e) => handleLinkClick(e, item.id)}
+                    className={`text-xs font-semibold block transition-colors duration-200 hover:text-neutral-800 dark:hover:text-text-main leading-normal cursor-pointer select-none ${
+                      isActive
+                        ? "text-accent-green font-bold"
+                        : "text-neutral-400 dark:text-text-muted"
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </aside>
   );
 }
+
 export default DocsOutline;

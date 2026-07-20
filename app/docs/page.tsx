@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DocsSidebar, DocCategory } from "@/components/ui/docs-sidebar";
 import { DocsContent } from "@/components/ui/docs-content";
 import { DocsOutline, OutlineItem } from "@/components/ui/docs-outline";
@@ -12,6 +12,7 @@ const CATEGORIES: DocCategory[] = [
     items: [
       { id: "introduction", label: "Introduction" },
       { id: "quickstart", label: "Quick Start Guide" },
+      { id: "mcp-connection", label: "Connect AI Agent (MCP)" },
       { id: "authentication", label: "Authentication" },
     ],
   },
@@ -27,6 +28,7 @@ const CATEGORIES: DocCategory[] = [
 const OUTLINE_ITEMS: OutlineItem[] = [
   { id: "introduction", label: "Introduction" },
   { id: "quickstart", label: "Quick Start Guide" },
+  { id: "mcp-connection", label: "Connect AI Agent (MCP)" },
   { id: "authentication", label: "Authentication" },
   { id: "ingest-telemetry", label: "Ingest Telemetry" },
   { id: "emission-factors", label: "Emission Factors" },
@@ -36,6 +38,42 @@ export default function DocsPage() {
   const [activeSectionId, setActiveSectionId] = useState("introduction");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [copiedTextId, setCopiedTextId] = useState<string | null>(null);
+
+  // Robust scrollspy implementation using relative viewport coordinates to handle short sections perfectly
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if we are at the bottom of the page (to highlight last section automatically)
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 20;
+      if (isAtBottom && OUTLINE_ITEMS.length > 0) {
+        setActiveSectionId(OUTLINE_ITEMS[OUTLINE_ITEMS.length - 1].id);
+        return;
+      }
+
+      const scrollPosition = window.scrollY + 140; // 140px offset to trigger active state near top header
+      
+      let currentActive = OUTLINE_ITEMS[0].id;
+      for (let i = 0; i < OUTLINE_ITEMS.length; i++) {
+        const el = document.getElementById(OUTLINE_ITEMS[i].id);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          if (scrollPosition >= top) {
+            currentActive = OUTLINE_ITEMS[i].id;
+          } else {
+            break;
+          }
+        }
+      }
+      setActiveSectionId(currentActive);
+    };
+
+    // Run on initial load
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -104,7 +142,11 @@ export default function DocsPage() {
         </main>
 
         {/* Right Sidebar Scrollspy Outline */}
-        <DocsOutline items={OUTLINE_ITEMS} />
+        <DocsOutline
+          items={OUTLINE_ITEMS}
+          activeId={activeSectionId}
+          onSelect={handleSelectSection}
+        />
       </div>
     </div>
   );
