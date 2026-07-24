@@ -12,15 +12,16 @@ const CATEGORIES: DocCategory[] = [
     items: [
       { id: "introduction", label: "Introduction" },
       { id: "quickstart", label: "Quick Start Guide" },
-      { id: "mcp-connection", label: "Connect AI Agent (MCP)" },
+      { id: "connect-ai-agent-mcp", label: "Connect AI Agent (MCP)" },
       { id: "authentication", label: "Authentication" },
-      { id: "ai-guide", label: "AI Developer Guide" },
+      { id: "ai-developer-guide", label: "AI Developer Guide" },
+      { id: "api-reference", label: "API Reference" },
     ],
   },
   {
     title: "Infrastructure & Ledger",
     items: [
-      { id: "canonical-model", label: "Canonical Activity Model" },
+      { id: "canonical-activity-model", label: "Canonical Activity Model" },
       { id: "confidence-scoring", label: "Confidence Scoring" },
       { id: "carbon-ledger", label: "Carbon Ledger (Double-Entry)" },
       { id: "ingest-telemetry", label: "Ingest Telemetry" },
@@ -28,9 +29,29 @@ const CATEGORIES: DocCategory[] = [
     ],
   },
   {
+    title: "Core Concepts",
+    items: [
+      { id: "carbon-activity-model", label: "Carbon Activity Model" },
+      { id: "scopes-categories", label: "Scopes & Categories" },
+    ],
+  },
+  {
+    title: "SDKs",
+    items: [
+      { id: "nodejs-sdk", label: "Node.js SDK" },
+    ],
+  },
+  {
     title: "Payments & Marketplace",
     items: [
-      { id: "offset-marketplace", label: "Carbon Marketplace (Dodo)" },
+      { id: "carbon-marketplace-dodo", label: "Carbon Marketplace (Dodo)" },
+    ],
+  },
+  {
+    title: "ZeroCarbon MCP Platform",
+    items: [
+      { id: "mcp-platform-overview", label: "Platform Overview" },
+      { id: "mcp-ai-architecture", label: "AI Architecture Guide" },
     ],
   },
 ];
@@ -38,15 +59,21 @@ const CATEGORIES: DocCategory[] = [
 const OUTLINE_ITEMS: OutlineItem[] = [
   { id: "introduction", label: "Introduction" },
   { id: "quickstart", label: "Quick Start Guide" },
-  { id: "mcp-connection", label: "Connect AI Agent (MCP)" },
+  { id: "connect-ai-agent-mcp", label: "Connect AI Agent (MCP)" },
   { id: "authentication", label: "Authentication" },
-  { id: "ai-guide", label: "AI Developer Guide" },
-  { id: "canonical-model", label: "Canonical Activity Model" },
+  { id: "ai-developer-guide", label: "AI Developer Guide" },
+  { id: "api-reference", label: "API Reference" },
+  { id: "canonical-activity-model", label: "Canonical Activity Model" },
   { id: "confidence-scoring", label: "Confidence Scoring" },
   { id: "carbon-ledger", label: "Carbon Ledger (Double-Entry)" },
   { id: "ingest-telemetry", label: "Ingest Telemetry" },
   { id: "emission-factors", label: "Emission Factors" },
-  { id: "offset-marketplace", label: "Carbon Marketplace (Dodo)" },
+  { id: "carbon-activity-model", label: "Carbon Activity Model" },
+  { id: "scopes-categories", label: "Scopes & Categories" },
+  { id: "nodejs-sdk", label: "Node.js SDK" },
+  { id: "carbon-marketplace-dodo", label: "Carbon Marketplace (Dodo)" },
+  { id: "mcp-platform-overview", label: "MCP Platform Overview" },
+  { id: "mcp-ai-architecture", label: "AI Architecture Guide" },
 ];
 
 export default function DocsPage() {
@@ -142,7 +169,7 @@ export default function DocsPage() {
               Table of Contents
             </button>
             <span className="text-[10px] text-text-muted">
-              ZeroCarbon MCP SDK v0.1.0
+              ZeroCarbon API v3
             </span>
           </div>
 
